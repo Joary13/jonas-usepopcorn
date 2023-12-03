@@ -50,26 +50,39 @@ const tempWatchedData = [
 const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
+// structural component
+
 export default function App() {
   const [movies, setMovies] = useState(tempMovieData);
 
   return (
     <>
-      <Navbar movies={movies} />
-      <Main movies={movies} />
+      <Navbar>
+        <InputMovie />
+        <NumResults movies={movies} />
+      </Navbar>
+      <Main>
+        <BoxListMovies>
+          <MovieList movies={movies} />
+        </BoxListMovies>
+        <BoxWatchedMovies />
+      </Main>
     </>
   );
 }
 
-function Navbar({ movies }) {
+// structural component
+
+function Navbar({ children }) {
   return (
     <nav className='nav-bar'>
       <Logo />
-      <InputMovie />
-      <NumResults movies={movies} />
+      {children}
     </nav>
   );
 }
+
+//stateless/presentational component
 
 function Logo() {
   return (
@@ -79,6 +92,8 @@ function Logo() {
     </div>
   );
 }
+
+// stateful component
 
 function InputMovie() {
   const [query, setQuery] = useState('');
@@ -93,6 +108,8 @@ function InputMovie() {
   );
 }
 
+// stateless/presentational
+
 function NumResults({ movies }) {
   return (
     <p className='num-results'>
@@ -101,16 +118,14 @@ function NumResults({ movies }) {
   );
 }
 
-function Main({ movies }) {
-  return (
-    <main className='main'>
-      <BoxListMovies movies={movies} />
-      <BoxWatchedMovies />
-    </main>
-  );
+// structural
+function Main({ children }) {
+  return <main className='main'>{children}</main>;
 }
 
-function BoxListMovies({ movies }) {
+// statefull
+
+function BoxListMovies({ children }) {
   const [isOpen1, setIsOpen1] = useState(true);
 
   return (
@@ -121,16 +136,23 @@ function BoxListMovies({ movies }) {
       >
         {isOpen1 ? '–' : '+'}
       </button>
-      {isOpen1 && (
-        <ul className='list'>
-          {movies?.map((movie) => (
-            <MovieFromList key={movie.imdbID} movie={movie} />
-          ))}
-        </ul>
-      )}
+      {isOpen1 && children}
     </div>
   );
 }
+
+// statefull
+function MovieList({ movies }) {
+  return (
+    <ul className='list'>
+      {movies?.map((movie) => (
+        <MovieFromList key={movie.imdbID} movie={movie} />
+      ))}
+    </ul>
+  );
+}
+
+// stateless/presentational
 
 function MovieFromList({ movie }) {
   return (
@@ -147,6 +169,7 @@ function MovieFromList({ movie }) {
   );
 }
 
+// statefull
 function BoxWatchedMovies() {
   const [isOpen2, setIsOpen2] = useState(true);
   const [watched, setWatched] = useState(tempWatchedData);
@@ -169,6 +192,7 @@ function BoxWatchedMovies() {
   );
 }
 
+// stateless/presentational
 function MoviesWatchedSummary({ watched }) {
   const avgImdbRating = average(watched.map((movie) => movie.imdbRating));
   const avgUserRating = average(watched.map((movie) => movie.userRating));
@@ -198,6 +222,7 @@ function MoviesWatchedSummary({ watched }) {
   );
 }
 
+// stateless
 function WatchedMoviesList({ watched }) {
   return (
     <ul className='list'>
@@ -208,6 +233,7 @@ function WatchedMoviesList({ watched }) {
   );
 }
 
+// stateless/presentational
 function MovieWatched({ movie }) {
   return (
     <li>
