@@ -16,18 +16,26 @@ const textStyle = {
 };
 export default function StarRating({ maxRating = 5 }) {
   const [rating, setRating] = useState(0);
+  const [tempRating, setTempRating] = useState(0);
+
+  // function handdleHover() {
+  //   () => setHover(i + 1);
+  // }
+
   return (
     <div style={containerStyle}>
       <div style={startContainerStyle}>
         {Array.from({ length: maxRating }, (_, i) => (
           <Star
             key={i + 1}
-            full={rating > i}
+            full={tempRating ? tempRating > i : rating > i}
             onClick={() => setRating(i + 1)}
+            onHoverIn={() => setTempRating(i + 1)}
+            onHoverOut={() => setTempRating(0)}
           />
         ))}
       </div>
-      <p style={textStyle}>{rating || ''}</p>
+      <p style={textStyle}>{tempRating || rating || ''}</p>
     </div>
   );
 }
@@ -39,9 +47,15 @@ const starStyle = {
   cursor: 'pointer',
 };
 
-function Star({ onClick, full }) {
+function Star({ onClick, onHoverIn, onHoverOut, full }) {
   return (
-    <span role='button' style={starStyle} onClick={onClick}>
+    <span
+      role='button'
+      style={starStyle}
+      onClick={onClick}
+      onMouseEnter={onHoverIn}
+      onMouseLeave={onHoverOut}
+    >
       {full ? (
         <svg
           xmlns='http://www.w3.org/2000/svg'
