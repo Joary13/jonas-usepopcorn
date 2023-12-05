@@ -31,7 +31,7 @@ export default function StarRating({
 
   function handdleRating(rating) {
     setRating(rating);
-    if (typeof onMovieRating !== 'undefined') onMovieRating(rating);
+    if (onMovieRating) onMovieRating(rating);
   }
 
   return (
