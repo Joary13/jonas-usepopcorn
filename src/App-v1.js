@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 const tempMovieData = [
   {
@@ -53,28 +53,12 @@ const average = (arr) =>
 // structural component
 
 // my key: c9aafbcd  http://www.omdbapi.com/?apikey=[yourkey]&
-const KEY = 'c9aafbcd';
 
 export default function App() {
-  const [movies, setMovies] = useState([]);
-  const [watched, setWatched] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const query = 'interstellar';
+  const [movies, setMovies] = useState(tempMovieData);
+  const [watched, setWatched] = useState(tempWatchedData);
 
-  useEffect(function () {
-    async function fetchData() {
-      setIsLoading(true);
-      const result = await fetch(
-        `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
-      );
-      const data = await result.json();
-      setMovies(data.Search);
-      console.log(data.Search);
-      setIsLoading(false);
-    }
-    fetchData();
-  }, []);
-
+  fetch('http://www.omdbapi.com/?apikey=[c9aafbcd]&');
   return (
     <>
       <Navbar>
@@ -91,8 +75,8 @@ export default function App() {
             </>
           }
         /> */}
-        <BoxMovie loading={isLoading}>
-          {isLoading ? <Loader /> : <MovieList movies={movies} />}
+        <BoxMovie>
+          <MovieList movies={movies} />
         </BoxMovie>
         <BoxMovie>
           <MoviesWatchedSummary watched={watched} />
@@ -112,10 +96,6 @@ function Navbar({ children }) {
       {children}
     </nav>
   );
-}
-
-function Loader() {
-  return <p className='loader'>Loading...</p>;
 }
 
 //stateless/presentational component
@@ -228,7 +208,7 @@ function MovieFromList({ movie }) {
 //   );
 // }
 
-function BoxMovie({ children, loading }) {
+function BoxMovie({ children }) {
   const [isOpen, setIsOpen] = useState(true);
 
   return (
