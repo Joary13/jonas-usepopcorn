@@ -59,18 +59,29 @@ export default function App() {
   const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const query = 'interstellar';
+  const [error, setError] = useState('');
+  const query = 'joary';
 
   useEffect(function () {
     async function fetchData() {
       setIsLoading(true);
-      const result = await fetch(
-        `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
-      );
-      const data = await result.json();
-      setMovies(data.Search);
-      console.log(data.Search);
-      setIsLoading(false);
+      try {
+        const result = await fetch(
+          `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
+        );
+        if (!result.ok)
+          throw new Error('something went wrong with fetching movies');
+        const data = await result.json();
+        console.log(data);
+        if (data.Response === 'False') throw new Error(data.Error);
+        setMovies(data.Search);
+        console.log(data.Search);
+      } catch (err) {
+        console.error(err.message);
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
     }
     fetchData();
   }, []);
@@ -91,8 +102,11 @@ export default function App() {
             </>
           }
         /> */}
-        <BoxMovie loading={isLoading}>
-          {isLoading ? <Loader /> : <MovieList movies={movies} />}
+        <BoxMovie>
+          {/* {isLoading ? <Loader /> : <MovieList movies={movies} />} */}
+          {isLoading && <Loader />}
+          {!isLoading && !error && <MovieList movies={movies} />}
+          {error && <ErrorMessage message={error} />}
         </BoxMovie>
         <BoxMovie>
           <MoviesWatchedSummary watched={watched} />
@@ -116,6 +130,15 @@ function Navbar({ children }) {
 
 function Loader() {
   return <p className='loader'>Loading...</p>;
+}
+
+function ErrorMessage({ message }) {
+  return (
+    <p className='error'>
+      <span>⛔</span>
+      {message}
+    </p>
+  );
 }
 
 //stateless/presentational component
