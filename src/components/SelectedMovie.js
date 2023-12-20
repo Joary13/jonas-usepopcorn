@@ -43,6 +43,21 @@ export function SelectedMovie({
 
   useEffect(
     function () {
+      function callback(e) {
+        if (e.code === 'Escape') {
+          onCloseMovieDetails();
+        }
+      }
+      document.addEventListener('keydown', callback);
+      return function () {
+        document.removeEventListener('keydown', callback);
+      };
+    },
+    [onCloseMovieDetails]
+  );
+
+  useEffect(
+    function () {
       // if (isWatched) {
       //   setMovieInfos(isWatched);
       //   setUserRating(isWatched.userRating);
