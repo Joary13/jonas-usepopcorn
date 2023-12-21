@@ -27,6 +27,10 @@ export function SelectedMovie({
 
   const isWatched = watched.find((mov) => mov.imdbID === selectedId);
 
+  // if (imdbRating > 8) {
+  //   const [isTop, setIsTop] = useState(true);
+  // }
+
   function handleAdd() {
     const newWatchedMovie = {
       imdbID: selectedId,
